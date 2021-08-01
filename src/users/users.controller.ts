@@ -8,19 +8,23 @@ import {
   Delete,
   ParseIntPipe,
   UsePipes,
-  ValidationPipe
+  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { UsersStatus } from "./enums/users-status.enum";
-import { UserStatusValidationPipe } from "./pipes/user-status-validation.pipe";
+import { UsersStatus } from './enums/users-status.enum';
+import { UserStatusValidationPipe } from './pipes/user-status-validation.pipe';
 
 @Controller('/api/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  /**
+   * Create user
+   * @param createUserDto
+   */
   @Post()
   @UsePipes(ValidationPipe)
   create(@Body() createUserDto: CreateUserDto): Promise<User> {
@@ -31,7 +35,7 @@ export class UsersController {
    * List all users
    */
   @Get()
-  findAll() {
+  findAll(): Promise<User[]> {
     return this.usersService.findAll();
   }
 
@@ -44,20 +48,35 @@ export class UsersController {
     return this.usersService.findUserById(id);
   }
 
+  /**
+   * Update user
+   * @param id
+   * @param updateUserDto
+   */
+  @Patch(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto): Promise<any> {
+    return this.usersService.update(id, updateUserDto);
+  }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.usersService.update(id, updateUserDto);
-  // }
-
+  /**
+   * Update user status
+   * @param id
+   * @param status
+   */
   @Patch('/:id/status')
-  updateUserStatus(@Param('id') id: number, @Body('status', UserStatusValidationPipe) status: UsersStatus) {
+  updateUserStatus(
+    @Param('id') id: number,
+    @Body('status', UserStatusValidationPipe) status: UsersStatus,
+  ) {
     return this.usersService.updateUserStatus(id, status);
   }
 
-  /*
+  /**
+   * Remove user (status: DELETED)
+   * @param id
+   */
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
-  }*/
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.remove(id);
+  }
 }
