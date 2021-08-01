@@ -13,17 +13,19 @@ export class UsersService {
   }
 
   /**
-   *
+   * Create's new user
    * @param createUserDto
    */
   async create(createUserDto: CreateUserDto): Promise<User> {
     return this.usersRepository.createUser(createUserDto);
   }
 
-  // findAll() {
-  //   return `This action returns all users`;
-  // }
-  //
+  /**
+   * List all users
+   */
+  async findAll() {
+    return await this.usersRepository.find();
+  }
 
   /**
    * Get user by id
@@ -37,7 +39,18 @@ export class UsersService {
     return user;
   }
 
-  //
+  /**
+   * Updates user status (ACTIVE/INACTIVE)
+   * @param id
+   * @param status
+   */
+  async updateUserStatus(id: number, status: UsersStatus): Promise<User> {
+    const user = await this.findUserById(id);
+    user.status = status;
+    return await user.save();
+  }
+
+
   // update(id: number, updateUserDto: UpdateUserDto) {
   //   return `This action updates a #${id} user`;
   // }
