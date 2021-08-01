@@ -4,6 +4,7 @@ import { UsersRepository } from "./users.repository";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./entities/user.entity";
 import { UsersStatus } from "./enums/users-status.enum";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
 @Injectable()
 export class UsersService {
@@ -13,7 +14,7 @@ export class UsersService {
   }
 
   /**
-   * Create's new user
+   * Creates new user
    * @param createUserDto
    */
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -23,8 +24,8 @@ export class UsersService {
   /**
    * List all users
    */
-  async findAll() {
-    return await this.usersRepository.find();
+  async findAll(): Promise<User[]> {
+    return await this.usersRepository.findAll();
   }
 
   /**
@@ -32,11 +33,7 @@ export class UsersService {
    * @param id
    */
   async findUserById(id: number): Promise<User> {
-    const user = await this.usersRepository.findOne(id);
-    if (!user) {
-      throw new NotFoundException(`No existe un usuario con ID = ${id}`);
-    }
-    return user;
+    return await this.usersRepository.findUserById(id);
   }
 
   /**
@@ -45,17 +42,24 @@ export class UsersService {
    * @param status
    */
   async updateUserStatus(id: number, status: UsersStatus): Promise<User> {
-    const user = await this.findUserById(id);
-    user.status = status;
-    return await user.save();
+    return this.usersRepository.updateUserStatus(id, status);
   }
 
 
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-  //
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
+  /**
+   * Update user
+   * @param id
+   * @param updateUserDto
+   */
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<any> {
+    return await this.usersRepository.updateUser(id, updateUserDto);
+  }
+
+  /**
+   * Remove user (status: DELETED)
+   * @param id
+   */
+  async remove(id: number) {
+    return await this.usersRepository.removeUser(id);
+  }
 }
