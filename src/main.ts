@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { TransformInterceptor } from './interceptors/transform.interceptor';
 import * as helmet from 'helmet';
+import * as csurf from 'csurf';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,9 @@ async function bootstrap() {
 
   // Enabling Cross-origin resource sharing (CORS)
   app.enableCors();
+
+  // Enabling CSRF Protection
+  app.use(csurf());
 
   await app.listen(3000);
 }
