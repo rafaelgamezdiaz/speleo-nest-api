@@ -8,6 +8,9 @@ import * as csurf from 'csurf';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Enabling CSRF Protection
+  app.use(csurf());
+
   // Helmet security (14 http middlewares securities)
   app.use(helmet());
 
@@ -16,9 +19,6 @@ async function bootstrap() {
 
   // Enabling Cross-origin resource sharing (CORS)
   app.enableCors();
-
-  // Enabling CSRF Protection
-  app.use(csurf());
 
   await app.listen(3000);
 }
