@@ -9,6 +9,8 @@ import {
   ParseIntPipe,
   UsePipes,
   ValidationPipe,
+  Res,
+  Response
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,6 +18,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UsersStatus } from './enums/users-status.enum';
 import { UserStatusValidationPipe } from './pipes/user-status-validation.pipe';
+import { BaseResponse } from "../../common/base.response";
 
 @Controller('/api/users')
 export class UsersController {
@@ -35,17 +38,18 @@ export class UsersController {
    * List all users
    */
   @Get()
-  findAll(): Promise<User[]> {
+  findAll(): Promise<any> { // Promise<User[]>
     return this.usersService.findAll();
   }
 
   /**
    * Get user by ID
    * @param id
+   * @param response
    */
   @Get('/:id')
-  getUserById(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return this.usersService.findUserById(id);
+  async getUserById(@Param('id', ParseIntPipe) id: number): Promise<any> { // : Promise<User>
+    return  await this.usersService.findUserById(id);
   }
 
   /**
@@ -54,7 +58,10 @@ export class UsersController {
    * @param updateUserDto
    */
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto): Promise<any> {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<any> {
     return this.usersService.update(id, updateUserDto);
   }
 
