@@ -4,12 +4,24 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UsersStatus } from "./enums/users-status.enum";
 import { ConflictException, HttpStatus, NotFoundException } from "@nestjs/common";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { AuthDto } from "../../auth/dto/auth.dto";
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {
 
   /**
+   * Register User
+   *  - user register from the App or WebPage (this endpoint could be not available)
+   * @param authDto
+   */
+  async registerUser(authDto: AuthDto): Promise<User> {
+    const user = this.create(authDto);
+    return await user.save();
+  }
+
+  /**
    * Create user
+   *  - creates user from the Admin-Panel
    * @param createUserDto
    */
   async createUser(createUserDto: CreateUserDto): Promise<User> {

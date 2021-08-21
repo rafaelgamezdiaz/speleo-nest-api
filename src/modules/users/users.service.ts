@@ -25,7 +25,8 @@ export class UsersService {
   /**
    * List all users
    */
-  async findAll(): Promise<BaseResponse<any>>  { //Promise<User[]>
+  async findAll(): Promise<BaseResponse<User[]>> {
+    //Promise<User[]>
     try {
       const users = await this.usersRepository.findAll();
      // return users;
@@ -36,6 +37,19 @@ export class UsersService {
       );
     } catch (error) {}
   }
+
+  /**
+   * Get user by field
+   * @param email
+   */
+  async findUserByEmail(email: string): Promise<any> {
+    try {
+      return await this.usersRepository.find({ email });
+    } catch (error) {
+      return error;
+    }
+  }
+
 
   /**
    * Get user by id

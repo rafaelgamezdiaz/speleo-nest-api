@@ -10,8 +10,8 @@ import {
   UsePipes,
   ValidationPipe,
   Res,
-  Response
-} from '@nestjs/common';
+  Response, UseGuards, UseInterceptors, ClassSerializerInterceptor
+} from "@nestjs/common";
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -19,8 +19,13 @@ import { User } from './entities/user.entity';
 import { UsersStatus } from './enums/users-status.enum';
 import { UserStatusValidationPipe } from './pipes/user-status-validation.pipe';
 import { BaseResponse } from "../../common/base.response";
+import { Roles } from "./decorators/roles.decorator";
+import { Role } from "./enums/roles.enum";
+import { RolesGuard } from "../../auth/guards/roles.guard";
+import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
 
 @Controller('/api/users')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -38,14 +43,15 @@ export class UsersController {
    * List all users
    */
   @Get()
-  findAll(): Promise<any> { // Promise<User[]>
+  @Roles(Role.USER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  findAll(): Promise<BaseResponse<User[]>> {
     return this.usersService.findAll();
   }
 
   /**
    * Get user by ID
    * @param id
-   * @param response
    */
   @Get('/:id')
   async getUserById(@Param('id', ParseIntPipe) id: number): Promise<any> { // : Promise<User>

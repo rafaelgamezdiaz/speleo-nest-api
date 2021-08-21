@@ -1,42 +1,45 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { UsersStatus } from '../enums/users-status.enum';
+import { Role } from '../enums/roles.enum';
+import { Exclude } from "class-transformer";
 
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   surname: string;
 
-  @Column()
+  @Column({ nullable: true })
   lastname: string;
 
-  @Column()
+  @Column({ nullable: true })
   gender: string;
 
   @Column()
   email: string;
 
   @Column()
+  @Exclude({ toPlainOnly: true })
   password: string;
 
-  @Column()
+  @Column({ nullable: true })
   phone: string;
 
-  @Column()
+  @Column({ nullable: true })
   address: string;
 
-  @Column()
+  @Column({ nullable: true })
   age: number;
 
-  @Column()
+  @Column({ nullable: true } )
   group: string; // speleological group
 
-  @Column()
+  @Column({ default: Role.USER })
   role: string;
 
   @Column({ default: UsersStatus.ACTIVE })

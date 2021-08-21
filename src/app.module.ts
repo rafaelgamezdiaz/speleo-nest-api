@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/typeorm.config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule } from "@nestjs/config";
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -21,6 +22,7 @@ import { ConfigModule } from "@nestjs/config";
       ttl: 60,
       limit: 10,
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
