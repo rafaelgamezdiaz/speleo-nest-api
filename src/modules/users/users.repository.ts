@@ -1,13 +1,22 @@
-import { EntityRepository, Not, Repository } from "typeorm";
-import { User } from "./entities/user.entity";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UsersStatus } from "./enums/users-status.enum";
-import { ConflictException, HttpStatus, NotFoundException } from "@nestjs/common";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import { AuthDto } from "../../auth/dto/auth.dto";
+import { EntityRepository, Not, Repository } from 'typeorm';
+import { User } from './entities/user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UsersStatus } from './enums/users-status.enum';
+import {
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthDto } from '../../auth/dto/auth.dto';
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {
+  /**
+   * Find all
+   */
+  async findAll(): Promise<User[]> {
+    return await this.find({ where: { status: Not(UsersStatus.DELETED) } });
+  }
 
   /**
    * Register User
@@ -42,13 +51,6 @@ export class UsersRepository extends Repository<User> {
   }
 
   /**
-   * Find all users
-   */
-  async findAll(): Promise<User[]> {
-    return await this.find({ where: { status: Not(UsersStatus.DELETED) } });
-  }
-
-  /**
    * Update user
    * @param id
    * @param updateUserDto
@@ -60,10 +62,12 @@ export class UsersRepository extends Repository<User> {
     }
     const userUpdated = await this.update(id, updateUserDto);
     if (!userUpdated) {
-      throw new ConflictException(`Ha ocurrido un error al intentar actualizar los datos del usuario.`);
+      throw new ConflictException(
+        `Ha ocurrido un error al intentar actualizar los datos del usuario.`,
+      );
     }
     return {
-      message: `Se han actualizado los datos del usuario: ${user.name} ${user.surname}`
+      message: `Se han actualizado los datos del usuario: ${user.name} ${user.surname}`,
     };
   }
 
@@ -87,11 +91,11 @@ export class UsersRepository extends Repository<User> {
     user.status = UsersStatus.DELETED;
     if (await user.save()) {
       return {
-        message: `Se ha eliminado el usuario exitosamente`
+        message: `Se ha eliminado el usuario exitosamente`,
       };
     } else {
       return {
-        message: `Error al intentar eliminar el usuario`
+        message: `Error al intentar eliminar el usuario`,
       };
     }
   }

@@ -1,12 +1,17 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { UsersStatus } from '../enums/users-status.enum';
 import { Role } from '../enums/roles.enum';
-import { Exclude } from "class-transformer";
+import { Exclude } from 'class-transformer';
+import { Membership } from '../../../common/membership/entities/membership.entity';
+import { CaveRegister } from "../../caves/cave-register/entities/cave-register.entity";
 
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @OneToMany(() => CaveRegister, (cave_register) => cave_register.user)
+  caves_registers: CaveRegister[];
 
   @Column({ nullable: true })
   name: string;
@@ -36,7 +41,13 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   age: number;
 
-  @Column({ nullable: true } )
+  @Column()
+  membership_id: number;
+
+  @ManyToOne(() => Membership, (membership) => membership.users)
+  membership: Membership;
+
+  @Column({ nullable: true })
   group: string; // speleological group
 
   @Column({ default: Role.USER })
